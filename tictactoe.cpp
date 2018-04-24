@@ -1,6 +1,7 @@
 #include <tictactoe.h>
 #include <PlayerConsole.h>
 #include <PlayerBot.h>
+#include <algorithm> 
 
 GameState::GameState()
 {
@@ -96,8 +97,7 @@ int BoardState::Walk(int startX, int startY, int strideX, int strideY, Tile vali
 		x += strideX;
 		y += strideY;
 		current = AtTile(x, y);
-		//loop back x/y. certain tiles will loop back to out of bounds. AtTile will give a != valid tile (Tile::Err) if that happens.
-		if( x == startX && y == startY ) //the start is implicitely checked already
+		if( x == startX && y == startY )
 			break;
 
 	}
@@ -173,14 +173,8 @@ void GameState::RunFrame()
 			projX = ply->x + input.x;
 			projY = ply->y + input.y;
 			//clamp to bounds
-			if( projX > 2 )
-				projX = 2;
-			else if( projX < 0 )
-				projX = 0;
-			if( projY > 2 )
-				projY = 2;
-			else if( projY < 0 )
-				projY = 0;
+			projX = std::clamp(projX, 0, 2);
+			projY = std::clamp(projY, 0, 2);
 			ply->x = projX;
 			ply->y = projY;
 			const Turn turn = Turn(projX, projY, ply);
