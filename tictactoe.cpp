@@ -45,7 +45,7 @@ void BoardState::Reset()
 
 BoardState::BoardState()
 {
-	Clear();
+	Reset();
 }
 
 
@@ -110,10 +110,7 @@ TurnResult BoardState::Advance(const Turn *in)
 	TurnResult res;
 	int x, y;
 	res.result = TurnResult::ResultType::Continue;
-	if( CheckTurn(in) != Valid )
-	{
-		return res;
-	}
+
 	Tile placed = in->GetPlayer() == ply1 ? Tile::Nought : Tile::Cross;
 	x = in->GetX();
 	y = in->GetY();
@@ -210,7 +207,7 @@ void GameState::RunFrame()
 					if( input.action )
 					{
 						phase = Phase::Playing;
-						boardState.Clear();
+						boardState.Reset();
 					}
 					break;
 			}
