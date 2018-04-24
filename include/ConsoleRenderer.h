@@ -214,9 +214,11 @@ void ConsoleRenderer::DrawGameState(GameState* gs)
 		}
 	}
 	COORD app;
+	PutString(offset, 0, "                \nW A S D move cursor\nSPACE place", FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN); //clear space and draw controls
 	switch( gs->phase )
 	{
 	case Phase::Playing:
+		
 		app = PutString(offset, 0, "TURN: ", FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN);
 		if( gs->boardState.PlayerIsCurrent(p1) )
 		{
