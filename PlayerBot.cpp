@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 
+
 Input PlayerBot::ProcessInput()
 {
 	Input input;
@@ -18,7 +19,7 @@ Input PlayerBot::ProcessInput()
 		input.x = 0;
 		input.y = 0;
 	}
-	if( gs->boardState.PlayerIsCurrent(this) )
+	if( gs->boardState.PlayerIsCurrent(this) && gs->phase != Phase::Intermission )
 		input.action = true;
 
 	return input;
