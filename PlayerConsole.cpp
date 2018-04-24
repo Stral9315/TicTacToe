@@ -25,7 +25,7 @@ Input PlayerConsole::ProcessInput()
 		case 's':
 			input.y = 1;
 			break;
-		case 'f':
+		case ' ':
 			input.action = true;
 			break;
 		}
