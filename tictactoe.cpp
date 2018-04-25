@@ -157,9 +157,10 @@ PlayerBase* BoardState::SwapTurn()
 }
 
 
-void GameState::RunFrame()
+void GameState::RunFrame(const double *delta)
 {
-	time++;
+	time += *delta;
+	1;
 	//Loop through players
 
 		for( int i = 0; i < 2; i++ )

@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <tictactoe.h>
+#include <math.h>
 
 //Uses the windows console to display
 class ConsoleRenderer
@@ -17,7 +18,6 @@ public:
 	ConsoleRenderer();
 	int Initialize();
 	void ClearScreen();
-	void DisplayGamestate();
 	void PutSymbol(COORD pos, char symbol, WORD colour);
 	void PutSymbol(int x, int y, char symbol, unsigned short colour);
 	COORD PutString(int x, int y, char *str, unsigned short colour);
@@ -186,12 +186,9 @@ void ConsoleRenderer::DrawGameState(GameState* gs)
 
 
 
-
+			PutString(x, y, "        \n        \n        \n        \n        \n        \n        \n        ", FOREGROUND_GREEN);
 			switch( tile )
 			{
-			case Tile::Blank:
-				PutString(x, y, "        \n        \n        \n        \n        \n        \n        \n        ", FOREGROUND_GREEN);
-				break;
 			case Tile::Cross:
 				PutString(x, y, "X     X \n X   X  \n  X X   \n   X    \n  X X   \n X   X  \nX     X \n        ", FOREGROUND_RED);
 				break;
@@ -208,8 +205,10 @@ void ConsoleRenderer::DrawGameState(GameState* gs)
 
 			if( p1Sel || p2Sel )
 			{
-				if( gs->time % 15 > 7 )
-					PutString(x, y, "SSSSSSSS\nSSSSSSSS\nSSSSSSSS\nSSSSSSSS\nSSSSSSSS\nSSSSSSSS\nSSSSSSSS\nSSSSSSSS", col);
+				char a[512];
+				sprintf(a, "%c//////%c\n////////\n////////\n////////\n////////\n////////\n////////\n%c//////%c\0", (char)201, (char)187, char(200), char(188));
+				if( fmod(gs->time, 0.25) > 0.1 )
+					PutString(x, y, a, col);
 			}
 		}
 	}

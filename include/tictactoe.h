@@ -66,12 +66,12 @@ class GameState
 	PlayerBase* winner;
 
 public:
-	int time;
+	double time;
 	Phase phase;
 	BoardState boardState;
 
 	GameState();
-	void RunFrame();
+	void RunFrame(const double *delta);
 	PlayerBase* GetPlayer(const int _idx);
 	PlayerBase* GetWinner();
 };
