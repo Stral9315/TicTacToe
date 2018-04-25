@@ -12,6 +12,8 @@ GameState::GameState()
 	players[1] = new PlayerBot(this);
 	phase = Playing;
 	winner = nullptr;
+	winningChain = {0};
+
 
 	boardState.Init(players[0], players[1]);
 }
@@ -82,15 +84,18 @@ TurnValidity BoardState::CheckTurn(const Turn *in)
 
 }
 
-int BoardState::Walk(int startX, int startY, int strideX, int strideY, Tile valid)
+Chain BoardState::Walk(int startX, int startY, int strideX, int strideY, Tile valid)
 {
 	Tile current = AtTile(startX, startY);
+	Chain ch;
 	int chain = 0;
 	int x = startX;
 	int y = startY;
 	int i = 0;
 	while( current == valid )
 	{
+		ch.pos[chain].x = x;
+		ch.pos[chain].y = y;
 		chain++;
 		if( chain > 2 )
 			break;
@@ -101,7 +106,9 @@ int BoardState::Walk(int startX, int startY, int strideX, int strideY, Tile vali
 			break;
 
 	}
-	return chain;
+
+	ch.len = chain;
+	return ch;
 }
 
 
@@ -110,6 +117,7 @@ TurnResult BoardState::Advance(const Turn *in)
 	TurnResult res;
 	int x, y;
 	res.result = TurnResult::ResultType::Continue;
+	res.chain.len = 0;
 
 	Tile placed = in->GetPlayer() == ply1 ? Tile::Nought : Tile::Cross;
 	x = in->GetX();
@@ -118,12 +126,22 @@ TurnResult BoardState::Advance(const Turn *in)
 	board[x][y] = placed;
 
 	playedTiles++;
+	Chain diag1, diag2, horz, vert;
+	bool win = false;
+	diag1 = Walk(0, 2, 1, -1, placed);
+	diag2 = Walk(2, 2, -1, -1, placed);
+	horz = Walk(0, y, 1, 0, placed);
+	vert = Walk(x, 0, 0, 1, placed);
+	if( win = (diag1.len == 3) )
+		res.chain = diag1;
+	else if( win = (diag2.len == 3) )
+		res.chain = diag2;
+	else if( win = (horz.len == 3) )
+		res.chain = horz;
+	else if( win = (vert.len == 3) )
+		res.chain = vert;
 
-	if(
-		Walk(0, 2, 1, -1, placed) == 3 ||
-		Walk(2, 2, -1, -1, placed) == 3 ||
-		Walk(0, y, 1, 0, placed) == 3 ||
-		Walk(x, 0, 0, 1, placed) == 3 )
+	if(win)
 	{
 		res.result = TurnResult::ResultType::Winner;
 	}
@@ -160,7 +178,7 @@ PlayerBase* BoardState::SwapTurn()
 void GameState::RunFrame(const double *delta)
 {
 	time += *delta;
-	1;
+
 	//Loop through players
 
 		for( int i = 0; i < 2; i++ )
@@ -194,6 +212,7 @@ void GameState::RunFrame(const double *delta)
 								break;
 							case TurnResult::ResultType::Winner:
 								winner = ply;
+								winningChain = res.chain;
 								phase = Phase::Intermission;
 								break;
 							case TurnResult::ResultType::Draw:
@@ -208,6 +227,7 @@ void GameState::RunFrame(const double *delta)
 					if( input.action )
 					{
 						phase = Phase::Playing;
+						winningChain = {0};
 						boardState.Reset();
 					}
 					break;

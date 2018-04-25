@@ -237,14 +237,61 @@ void ConsoleRenderer::DrawGameState(GameState* gs)
 		{
 			app = PutString(offset, 0, "DRAW.....", FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN );
 		}
-		else if( p1 == gs->GetWinner() )
+		else
 		{
-			app = PutString(offset, 0, "YOU WON!!!", FOREGROUND_BLUE);
+			WORD col = p1 == gs->GetWinner() ? FOREGROUND_BLUE : FOREGROUND_RED;
+			if( p1 == gs->GetWinner() )
+			{
+				app = PutString(offset, 0, "YOU WON!!!", col);
+			}
+			else if( p2 == gs->GetWinner() )
+			{
+				app = PutString(offset, 0, "YOU LOSE...", col);
+			}
+
+			if (gs->winningChain.len == 3)
+			{
+				Chain chcopy = gs->winningChain;
+				for( int i = 0; i < chcopy.len; i++ )
+				{
+					chcopy.pos[i].x = 9 * gs->winningChain.pos[i].x + 6;
+					chcopy.pos[i].y = 9 * gs->winningChain.pos[i].y + 6;
+				}
+				int dx, dy;
+				int incX, incY;
+				float steps;
+				dx = (chcopy.pos[2].x - chcopy.pos[0].x);
+				dy = (chcopy.pos[2].y - chcopy.pos[0].y);
+
+				if( abs(dx) > abs(dy) )
+					steps = abs(dx);
+				else
+					steps = abs(dy);
+
+				incX = dx / steps;
+				incY = dy / steps;
+
+				int x, y;
+				x = chcopy.pos[0].x;
+				y = chcopy.pos[0].y;
+				for( int v = 0; v < steps; v++ )
+				{
+					x += incX;
+					y += incY;
+					PutSymbol((int)x, (int)y, (char)178, col | FOREGROUND_INTENSITY );
+				}
+
+				int i = 0;
+
+				while( i < steps )
+				{
+					
+ 					i++;
+				}
+
+			}
 		}
-		else if( p2 == gs->GetWinner() )
-		{
-			app = PutString(offset, 0, "YOU LOSE...", FOREGROUND_RED);
-		}
+
 	}
 
 	

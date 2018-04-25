@@ -3,7 +3,7 @@
 
 enum Tile { Blank, Cross, Nought, Err };
 
-struct vec2
+struct Pos
 {
 	int x, y;
 };
@@ -20,9 +20,17 @@ public:
 	PlayerBase *GetPlayer() const { return player; };
 };
 
+struct Chain
+{
+	Pos pos[3];
+	int len;
+};
+
+
 struct TurnResult
 {
 	enum ResultType { Continue, Winner, Draw } result;
+	Chain chain;
 	//PlayerBase *player; //Actually not necessary
 };
 
@@ -51,7 +59,7 @@ public:
 	TurnValidity CheckTurn(const Turn* in);
 	TurnResult Advance(const Turn* in);
 	Tile AtTile(int col, int row);
-	int Walk(int startX, int startY, int strideX, int strideY, Tile valid);
+	Chain Walk(int startX, int startY, int strideX, int strideY, Tile valid);
 };
 
 enum Phase
@@ -66,6 +74,7 @@ class GameState
 	PlayerBase* winner;
 
 public:
+	Chain winningChain;
 	double time;
 	Phase phase;
 	BoardState boardState;
